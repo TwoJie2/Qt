@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/start.jpg</file>
+        <file>res/background.jpg</file>
+        <file>res/back.jpg</file>
+        <file>res/bcount.jpg</file>
+        <file>res/wcount.jpg</file>
+        <file>res/coin0.png</file>
+        <file>res/coin1.png</file>
+        <file>res/coin2.png</file>
+        <file>res/coin3.png</file>
+    </qresource>
+</RCC>

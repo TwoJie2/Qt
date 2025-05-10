@@ -9,7 +9,7 @@ class Playscene : public QWidget
 public:
     explicit Playscene(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent *);
-    int num;
+    int num,nowflag;
     void add();
     Mycoin * a[8][8];
     const int mov[8][2]={{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};

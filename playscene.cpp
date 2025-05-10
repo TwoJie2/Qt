@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QtGlobal>
 #include <QSpinBox>
+#include <QPropertyAnimation>
 
 Playscene::Playscene(QWidget *parent)
     : QWidget{parent}
@@ -30,6 +31,10 @@ Playscene::Playscene(QWidget *parent)
     MyPushButton * wcountbtn = new MyPushButton(":/res/wcount.jpg");
     wcountbtn->setParent(this);
     wcountbtn->move(850,380);
+
+    MyPushButton * pointer = new MyPushButton(":/res/pointer.png");
+    pointer->setParent(this);
+    pointer->move(805,325);
 
     QSpinBox * cnt = new QSpinBox(this);
     cnt->setValue(2);
@@ -63,7 +68,37 @@ Playscene::Playscene(QWidget *parent)
         "}"
     );
 
-    num=5;
+    MyPushButton * bwin = new MyPushButton(":/res/bwin.png");
+    bwin->setParent(this);
+    bwin->move(this->width(),150);
+
+    QPropertyAnimation * banimation = new QPropertyAnimation(bwin,"geometry");
+    banimation->setDuration(1000);
+    banimation->setStartValue(QRect(bwin->x(),bwin->y(),bwin->width(),bwin->height()));
+    banimation->setEndValue(QRect(bwin->x()-210,bwin->y(),bwin->width(),bwin->height()));
+    banimation->setEasingCurve(QEasingCurve::Linear);
+
+    MyPushButton * wwin = new MyPushButton(":/res/wwin.png");
+    wwin->setParent(this);
+    wwin->move(this->width(),150);
+
+    QPropertyAnimation * wanimation = new QPropertyAnimation(wwin,"geometry");
+    wanimation->setDuration(1000);
+    wanimation->setStartValue(QRect(wwin->x(),wwin->y(),wwin->width(),wwin->height()));
+    wanimation->setEndValue(QRect(wwin->x()-210,wwin->y(),wwin->width(),wwin->height()));
+    wanimation->setEasingCurve(QEasingCurve::Linear);
+
+    MyPushButton * pwin = new MyPushButton(":/res/pwin.png");
+    pwin->setParent(this);
+    pwin->move(this->width(),150);
+
+    QPropertyAnimation * panimation = new QPropertyAnimation(pwin,"geometry");
+    panimation->setDuration(1000);
+    panimation->setStartValue(QRect(pwin->x(),pwin->y(),pwin->width(),pwin->height()));
+    panimation->setEndValue(QRect(pwin->x()-210,pwin->y(),pwin->width(),pwin->height()));
+    panimation->setEasingCurve(QEasingCurve::Linear);
+
+    num=5;nowflag=1;
     for (int i=0;i<8;i++){
         for (int j=0;j<8;j++){
             int now=0;
@@ -74,9 +109,9 @@ Playscene::Playscene(QWidget *parent)
             coin->setParent(this);
             coin->move(50+i*88,54+j*88);
 
-            connect(coin,&Mycoin::clicked,[=](){
+            connect(coin,&Mycoin::clicked,this,[=](){
                 if (coin->flag==3){
-                    coin->set(2-num%2);
+                    coin->set(nowflag);
                     ////////////////////////////////////////////////
                     for (int i=0;i<8;i++){
                         int line=8;
@@ -96,22 +131,42 @@ Playscene::Playscene(QWidget *parent)
                     }
                     ///////////////////////////////////////////////////////////////
                     this->add();
-                    int col=2-num%2;
+                    pointer->move(805,730-pointer->y());
+                    bool can=0;
                     for (int k=0;k<8;k++)
                         for (int l=0;l<8;l++){
                             if (a[k][l]->flag==1 || a[k][l]->flag==2) continue;
-                            if (check(k,l,col)) a[k][l]->set(3);
+                            if (check(k,l,nowflag)) a[k][l]->set(3),can=1;
                             else a[k][l]->set(0);
                         }
+                    if (!can){
+                        nowflag=3-nowflag;
+                        pointer->move(805,730-pointer->y());
+                        for (int k=0;k<8;k++)
+                            for (int l=0;l<8;l++){
+                                if (a[k][l]->flag==1 || a[k][l]->flag==2) continue;
+                                if (check(k,l,nowflag)) a[k][l]->set(3),can=1;
+                                else a[k][l]->set(0);
+                            }
+                    }
                     ////////////////////////////////////////////////
                     int res=0,res2=0;
+                    bool final=1;
                     for (int k=0;k<8;k++)
                         for (int l=0;l<8;l++){
                             if (a[k][l]->flag==1) res++;
                             if (a[k][l]->flag==2) res2++;
+                            if (a[k][l]->flag==3) final=0;
                         }
                     cnt->setValue(res);
                     cnt2->setValue(res2);
+                    /////////////////////////////////////////////////
+                    if (final){
+                        pointer->hide();
+                        if (res>res2) banimation->start();
+                        if (res<res2) wanimation->start();
+                        if (res==res2) panimation->start();
+                    }
                 }
             });
 
@@ -142,6 +197,7 @@ bool Playscene::check(int x,int y,int col){
 }
 void Playscene::add(){
     num++;
+    nowflag=3-nowflag;
 }
 void Playscene::paintEvent(QPaintEvent *){
     QPainter painter(this);

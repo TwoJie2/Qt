@@ -9,5 +9,9 @@
         <file>res/coin1.png</file>
         <file>res/coin2.png</file>
         <file>res/coin3.png</file>
+        <file>res/pointer.png</file>
+        <file>res/bwin.png</file>
+        <file>res/wwin.png</file>
+        <file>res/pwin.png</file>
     </qresource>
 </RCC>
